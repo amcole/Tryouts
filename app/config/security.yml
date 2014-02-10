@@ -1,0 +1,38 @@
+security:
+    encoders:
+        FOS\UserBundle\Model\UserInterface: sha512
+
+    role_hierarchy:
+        ROLE_USER:        [ROLE_VENDOR]
+        ROLE_ADMIN:       [ROLE_USER, ROLE_VENDOR, ROLE_ALLOWED_TO_SWITCH]
+        ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+
+    providers:
+        fos_userbundle:
+            id: fos_user.user_provider.username
+
+    firewalls:
+        main:
+            pattern:    ^/
+            form_login:
+                check_path: /login_check
+                login_path: /login
+                provider: fos_userbundle
+                csrf_provider: form.csrf_provider
+            logout:
+                path:   /logout
+                target: /
+            anonymous: ~
+            switch_user: ~
+            remember_me:
+                key: The name of our cat is Edgar!
+
+
+    access_control:
+        - { path: ^/new, roles: ROLE_VENDOR,  }
+        - { path: ^/create , roles: ROLE_EVENT_MANAGER }
+        - { path: ^/secure_area/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/secure_area/connect, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/secure_area, roles: ROLE_USER }
+        #- { path: ^/demo/secured/hello/admin/, roles: ROLE_ADMIN }
+        #- { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
